@@ -9,8 +9,8 @@ import json
 from requests.api import request
 from arguments import get_items_ids
 
-from errors import *
-from WalmartResponse import *
+from wiopy.errors import *
+from wiopy.WalmartResponse import *
 
 # Affiliates API only
 class WalmartIO:

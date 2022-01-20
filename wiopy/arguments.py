@@ -1,7 +1,7 @@
 """Module with helper functions for managing arguments."""
 
 
-from errors import InvalidParameterException
+from wiopy.errors import InvalidParameterException
 from typing import List, Union
 
 
