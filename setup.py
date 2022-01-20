@@ -1,11 +1,4 @@
-from distutils.core import setup
-import io
-import os.path as op
-
-def read(*parts, **kwargs):
-    encoding = kwargs.pop('encoding', 'utf-8')
-    filepath = op.join(op.dirname(__file__), *parts)
-    return io.open(filepath, encoding=encoding).read()
+from setuptools import setup
 
 setup(
   name = 'WIOpy',
@@ -14,8 +7,6 @@ setup(
   license='MIT',
   
   description = 'Walmart IO API python wrapper',
-  long_description=read('README.md'),
-  long_description_content_type='text/markdown',
 
   author = 'CoderJosh',
   author_email = '74162303+CoderJoshDK@users.noreply.github.com',
