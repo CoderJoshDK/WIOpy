@@ -2,13 +2,13 @@ from distutils.core import setup
 setup(
   name = 'WIOpy',
   packages = ['WIOpy'],
-  version = '0.1',
+  version = '0.0.1',
   license='MIT',
   description = 'Walmart IO API python wrapper',
   author = 'CoderJosh',
   author_email = '74162303+CoderJoshDK@users.noreply.github.com',
   url = 'https://github.com/CoderJoshDK/WIOpy',
-  download_url = 'https://github.com/CoderJoshDK/WIOpy/archive/refs/tags/v_01-alpha.tar.gz',
+  download_url = 'https://github.com/CoderJoshDK/WIOpy/archive/refs/tags/v_001-alpha.tar.gz',
   keywords = ['API', 'Wrapper', 'Python', 'Walmart', 'Affiliate', 'WalmartIO'],
   install_requires=[
           'requests',
