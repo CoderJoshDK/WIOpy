@@ -7,11 +7,11 @@ A python wrapper for the Walmart io API. Only supports the Affiliate API for now
 To download WIOpy, either fork this github repo or simply use Pypi via pip.
 ```sh
 $ pip install WIOpy
-```
+```  
 To upgrade the package simply run  
 ```sh
 $ pip install WIOpy --upgrade
-```
+```  
 
 ## How to use  
 An example of creating a WIOpy connection 
@@ -20,18 +20,18 @@ from wiopy import WalmartIO
 
 wiopy = WalmartIO(private_key_version='1', private_key_filename='./WM_IO_private_key.pem', consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
 data = wiopy.product_lookup('33093101')[0]
-```
+```  
 
 ## Response Examples
 When making a call to the API, an object will be returned. That object is an object version of returned JSON.  
 There are two ways to get info from the object:
- - `data.name`
+ - `data.name`  
  - `data['name']`  
 An example of a returned object and one that is not (review/search are variables returned):
  - `review.reviewStatistics.averageOverallRating` # Nested call
  - `search.facets` # Gives back a dict that can now be used like a dict and not object  
 Some attributes will return a dict and not an object due to a lack of documentation from Walmart.  
-When getting an attribute from a `WalmartResponse`, it will return either `response` or `None`. But trying to get an attribute of `None` will still raise an error.
+When getting an attribute from a `WalmartResponse`, it will return either `response` or `None`\. But trying to get an attribute of `None` will still raise an error.
 [Extra details on calls and responses](walmart.io/docs). However, the docs are inconsistent and lack typical practices such as response schema. That is why something like the search facets response is missing because the docs show it is in the response but not what type of data it will contain.  
 While there may be a response missing or a response not being converted to an object, please check [WalmartResponse](./wiopy/WalmartResponse.py) to get an idea of what a response will return. Some properties are not always present in a response.  
 
