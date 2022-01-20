@@ -405,7 +405,7 @@ class WalmartCatalog(WalmartResponse):
     
     Name (type):                        Description:
     -------                             -------
-    caegory (str):     	                Category id of the desired category. This should match the id field from Taxonomy API 
+    category (str):     	            Category id of the desired category. This should match the id field from Taxonomy API 
     format (str):	                    Format of response. Should be 'json'
     nextPage (str):                     URI of next page. Use this to get nextPage
     totalPages (str):                   Amount of pages that fit the catagory
@@ -590,7 +590,7 @@ class WalmartReviewResponse(WalmartResponse):
     brandName (str):	                    Item's brand
     productTrackingUrl (str):	            Product's tracking URL using publisher id
     categoryNode (str):	                    This string describes the Reporting Hierarchy level Ids that the item falls under.
-    reviews (list):                        Array of `WalmartReview` reviews for the item
+    reviews (list):                         Array of `WalmartReview` reviews for the item
     reviewStatistics (`ReviewStatistics`):	Customer review stats for the item
     nextPage (str):	                        URL next page of customer Review
     availableOnline (bool):     	        Item available online (true/false)

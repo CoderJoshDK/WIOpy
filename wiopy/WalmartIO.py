@@ -7,8 +7,8 @@ import base64
 import json
 
 from requests.api import request
-from arguments import get_items_ids
 
+from wiopy.arguments import get_items_ids
 from wiopy.errors import *
 from wiopy.WalmartResponse import *
 
@@ -243,13 +243,20 @@ class WalmartIO:
             facet = kwargs["facet"]
             if type(facet) == bool:
                 kwargs["facet"] = "on" if facet else "off"
-        if "facet.range" in kwargs or "facet.filter" in kwargs:
+
+        if "range" in kwargs:
+            kwargs["facet.range"] = kwargs.pop("range")
             kwargs["facet"] = "on"
+        if "filter" in kwargs:
+            kwargs["facet.filter"] = kwargs.pop("filter")
+            kwargs["facet"] = "on"
+
+        kwargs['query'] = query
         
 
         url = self.ENDPOINT + '/affil/product/v2/search'
         response = self._send_request(url, **kwargs)
-        return WalmartSearch(response())
+        return WalmartSearch(response)
 
     def stores(self, **kwargs) -> List[WalmartStore]:
         """
@@ -317,9 +324,7 @@ class WalmartIO:
             response = self._send_request(url, publisherId=publisherId)
         else:
             response = self._send_request(url)
-        for item in response['items']:
-            products.append(WalmartProduct(item))
-        return products
+        return [WalmartProduct(item) for item in response['items']]
 
     def _get_headers(self) -> dict:
         """
@@ -451,17 +456,3 @@ class WalmartIO:
             yield ','.join(full_list[i:i + chunk_size])
 
 
-# Simple tests
-if '__main__' == __name__:
-    wiopy = WalmartIO(private_key_version='1', private_key_filename='./WM_IO_private_key.pem', consumer_id='')
-    #data = wiopy.product_lookup('33093101, 54518466, 516833054')
-    #data = wiopy.reviews('33093101')
-    #print(data.reviewStatistics)
-    data = wiopy.stores(lat=29.735577, lon=-95.511747)
-    #data = wiopy.trending()
-
-    if type(data) == list:
-        for i in data:
-            print(i)
-    else:
-        print(data)

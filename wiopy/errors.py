@@ -1,3 +1,5 @@
+"""Module for errors that the API might encounter"""
+
 class WalmartException(Exception):
     """
     Base Class for Walmart Api Exceptions.
