@@ -2,6 +2,17 @@
 
 A python wrapper for the Walmart io API. Only supports the Affiliate API for now. The project is open to contributions 
 
+## Getting it
+
+To download WIOpy, either fork this github repo or simply use Pypi via pip.
+```sh
+$ pip install WIOpy
+```
+To upgrade the package simply run  
+```sh
+$ pip install WIOpy --upgrade
+```
+
 ## How to use  
 An example of creating a WIOpy connection 
 ```py
