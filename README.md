@@ -14,7 +14,8 @@ $ pip install WIOpy --upgrade
 ```  
 
 ## How to use  
-An example of creating a WIOpy connection 
+An example of creating a WIOpy connection   
+One important note is that you need to pass in the private key file location.  
 ```py
 from wiopy import WalmartIO
 
@@ -41,7 +42,7 @@ While there may be a response missing or a response not being converted to an ob
 ### [Catalog Product](https://walmart.io/docs/affiliate/paginated-items)
 Catalog Product API allows a developer to retrieve the products catalog in a paginated fashion. Catalog can be filtered by category, brand and/or any special offers like rollback, clearance etc.
 ```py
-data = wiopy.catalog_product()
+data = wiopy.catalog_product(category='3944', maxId='8342714')
 ```
 A catalog response contains category, format, nextPage, totalPages, and a list of items
 
@@ -49,7 +50,7 @@ A catalog response contains category, format, nextPage, totalPages, and a list o
 ### [Post Browsed Products](https://walmart.io/docs/affiliate/post-browsed-products)
 The post browsed products API allows you to recommend products to someone based on their product viewing history.
 ```py
-data = wiopy.post_browsed_products('36904791')
+data = wiopy.post_browsed_products('54518466')
 ```
 Response gives top 10 relevent items to the given id
 
@@ -71,7 +72,7 @@ Remember: product_lookup always returns a list of [WalmartProducts](https://walm
 ### [Product Recommendation](https://walmart.io/docs/affiliate/product-recommendation)
 Get recommendations based on a given product id
 ```py
-data = wiopy.product_recommendation('36904791')
+data = wiopy.product_recommendation('54518466')
 ```
 Response gives a list of related products
 
