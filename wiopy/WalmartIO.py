@@ -61,7 +61,6 @@ class WalmartIO:
         self._update_daily_calls_time = datetime.datetime.now() + datetime.timedelta(days=1)
         self.daily_calls = daily_calls
         self.daily_calls_remaining = daily_calls
-        self._last_header_call:int = 0
 
     def catalog_product(self, **kwargs) -> WalmartCatalog:
         """
@@ -344,10 +343,7 @@ class WalmartIO:
         # The header is valid for 180 seconds. 
         # We only update the headers if 100 seconds have passed 
         timeInt = int(time.time()*1000)
-        if timeInt < 100000 + self._last_header_call:
-            return self.headers
 
-        self._last_header_call = timeInt
         self.headers["WM_CONSUMER.INTIMESTAMP"] = str(timeInt)
 
         # <--- WM_SEC.AUTH_SIGNATURE --->
