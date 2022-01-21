@@ -17,7 +17,7 @@ $ pip install WIOpy --upgrade
 An example of creating a WIOpy connection   
 One important note is that you need to pass in the private key file location.  
 ```py
-from wiopy import WalmartIO
+from WIOpy import WalmartIO
 
 wiopy = WalmartIO(private_key_version='1', private_key_filename='./WM_IO_private_key.pem', consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
 data = wiopy.product_lookup('33093101')[0]
