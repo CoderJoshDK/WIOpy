@@ -408,6 +408,7 @@ class WalmartCatalog(WalmartResponse):
     category (str):     	            Category id of the desired category. This should match the id field from Taxonomy API 
     format (str):	                    Format of response. Should be 'json'
     nextPage (str):                     URI of next page. Use this to get nextPage
+    nextPageExist (bool):               Boolean of if there is a next page
     totalPages (str):                   Amount of pages that fit the catagory
     items (List[WalmartProduct]):       List of all returned items from response
     """
@@ -429,6 +430,11 @@ class WalmartCatalog(WalmartResponse):
         Pass this back into `catalog_product` as `nextPage=data.nextPage` to get next page response
         """
         return self.response_handler._get_attribute('nextPage')
+
+    @property
+    def nextPageExist(self) -> bool:
+        """Boolean of if there is a next page"""
+        return self.response_handler._get_attribute('nextPageExist')
 
     @property
     def totalPages(self):
