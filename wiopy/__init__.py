@@ -1,1 +1,1 @@
-from WIOpy.WalmartIO import WalmartIO
+from .WalmartIO import *
