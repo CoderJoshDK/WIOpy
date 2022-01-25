@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
   name = 'WIOpy',
   packages = ['WIOpy'],
-  version = '0.0.2',
+  version = '0.0.3',
   license='MIT',
   
   description = 'Walmart IO API python wrapper',
