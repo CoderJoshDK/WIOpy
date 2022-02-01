@@ -1,4 +1,3 @@
-from turtle import pu
 from typing import List, Generator, Union
 import requests, time, datetime
 from Crypto.Hash import SHA256
