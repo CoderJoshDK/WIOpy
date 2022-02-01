@@ -1,5 +1,6 @@
 [![Python](https://img.shields.io/badge/Python->3.6-%23FFD140)](https://www.python.org/)
 [![PyPI](https://img.shields.io/pypi/v/WIOpy)](https://pypi.org/project/WIOpy/)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/CoderJoshDK/WIOpy?include_prereleases)](https://github.com/CoderJoshDK/WIOpy)
 [![GitHub issues](https://img.shields.io/github/issues/CoderJoshDK/WIOpy)](https://github.com/CoderJoshDK/WIOpy/issues)
 [![GitHub Repo stars](https://img.shields.io/github/stars/CoderJoshDK/WIOpy?style=social)](https://github.com/CoderJoshDK/WIOpy)
 
