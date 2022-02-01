@@ -1,3 +1,8 @@
+[![Python](https://img.shields.io/badge/Python->3.6-%23FFD140)](https://www.python.org/)
+[![PyPI](https://img.shields.io/pypi/v/WIOpy)](https://pypi.org/project/WIOpy/)
+[![GitHub issues](https://img.shields.io/github/issues/CoderJoshDK/WIOpy)](https://github.com/CoderJoshDK/WIOpy/issues)
+[![GitHub Repo stars](https://img.shields.io/github/stars/CoderJoshDK/WIOpy?style=social)](https://github.com/CoderJoshDK/WIOpy)
+
 # WalmartIO Python Wrapper - WIOpy
 
 A python wrapper for the Walmart io API. Only supports the Affiliate API for now. The project is open to contributions 
@@ -66,7 +71,9 @@ or you can pass a list of strings
 data = wiopy.product_lookup('33093101, 54518466, 516833054')
 data = wiopy.product_lookup(['33093101', '54518466', '516833054'])
 ```
-Remember: product_lookup always returns a list of [WalmartProducts](https://walmart.io/docs/affiliate/item_response_groups)
+Remember: product_lookup always returns a list of [WalmartProducts](https://walmart.io/docs/affiliate/item_response_groups)  
+If you have a large number of products to lookup, use `bulk_product_lookup`. The function is almost the same, however, the bulk version does not raise errors.  
+Items are passed in as chunks of max size 20. If an error occurs on that call, all 20 will be lost. But the entire call will not be lost. 
 
 
 ### [Product Recommendation](https://walmart.io/docs/affiliate/product-recommendation)
@@ -119,3 +126,14 @@ The Trending Items API is designed to give the information on what is bestsellin
 data = wiopy.trending()
 ```
 
+## Logging
+WIOpy supports logging via the logging module. Configuration of the logging module can be as simple as:
+```py
+import logging
+
+logging.basicCongif(level=logging.INFO)
+```
+
+-------
+![License](https://img.shields.io/github/license/CoderJoshDK/WIOpy)
+![GitHub last commit](https://img.shields.io/github/last-commit/CoderJoshDK/WIOpy)

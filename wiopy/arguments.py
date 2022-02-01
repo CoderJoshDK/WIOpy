@@ -2,11 +2,11 @@
 
 
 from .errors import InvalidParameterException
-from typing import List, Union
+from typing import Union
 
 
-def get_items_ids(items: Union[str, List[str]]) -> str:
-    if not isinstance(items, str) and not isinstance(items, List):
+def get_items_ids(items: Union[str, list[str]]) -> list[str]:
+    if not isinstance(items, str) and not isinstance(items, list):
         raise InvalidParameterException('Invalid items argument, it should be a string or List of strings')
 
     if isinstance(items, str):

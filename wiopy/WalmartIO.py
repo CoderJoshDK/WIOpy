@@ -1,3 +1,4 @@
+from turtle import pu
 from typing import List, Generator, Union
 import requests, time, datetime
 from Crypto.Hash import SHA256
@@ -12,6 +13,12 @@ from .arguments import get_items_ids
 from .errors import *
 from .WalmartResponse import *
 
+import logging
+
+log = logging.getLogger(__name__)
+log.setLevel('DEBUG')
+
+
 # Affiliates API only
 class WalmartIO:
     """
@@ -21,11 +28,20 @@ class WalmartIO:
     wiopy = WalmartIO(private_key_version='1', private_key_filename='./WM_IO_private_key.pem', consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
     ```
 
+    Optional:
+    -------
+    You can provide `daily_calls` if it is not the default 5000.  
+    publisherId can also be provided and it will auto populate every querry. 
+    If you give publisherId as a kwarg, it will overide the default one the class has
     """
 
     ENDPOINT = "https://developer.api.walmart.com/api-proxy/service"
 
-    def __init__(self, *, private_key_version:str='1', private_key_filename:str, consumer_id:str, daily_calls:int=5000) -> None:
+    def __init__(
+        self, *, 
+        private_key_version:str='1', private_key_filename:str, consumer_id:str, 
+        daily_calls:int=5000, publisherId:str=None
+        ) -> None:
         """
         WalmartIO API Connection
         ------
@@ -43,6 +59,8 @@ class WalmartIO:
          * daily_calls (int) : Walmart grants 5000 daily calls to their API but you can ask for more.
          It can be assumed that this object will exist over multiple days, so total calls made in a day will be limited.
          https://walmart.io/termsandcondition
+         * publisherId (str) : Your Impact Radius Publisher Id. 
+         If provided, it will auto populate every querry with your id
         """
 
 
@@ -61,6 +79,10 @@ class WalmartIO:
         self._update_daily_calls_time = datetime.datetime.now() + datetime.timedelta(days=1)
         self.daily_calls = daily_calls
         self.daily_calls_remaining = daily_calls
+
+        self.publisherId = publisherId or None
+
+        log.info(f"Walmart IO connection with consumer id ending in {consumer_id[:-6]}")
 
     def catalog_product(self, **kwargs) -> WalmartCatalog:
         """
@@ -141,6 +163,8 @@ class WalmartIO:
 
         params = kwargs
         ids = get_items_ids(ids)
+        if len(ids) > 200:
+            log.warning("For large id lists, try using bulk_product_lookup. It will continue to run even if one chunk of ids raise an error")
         products = []
 
         for idGroup in self._get_product_id_chunk(list(set(ids)), 20):
@@ -149,6 +173,45 @@ class WalmartIO:
             for item in response['items']:
                 products.append(WalmartProduct(item))
         
+        return products
+
+    def bulk_product_lookup(self, ids:Union[str, List[str]], **kwargs) -> List[WalmartProduct]:
+        """
+        Walmart product lookup for a bulk of products. It will keep going even if there are errors
+
+        For more info: (https://walmart.io/docs/affiliate/product-lookup)
+
+        Params:
+        -------
+         * ids : list of ids to lookup
+         * Named params passed in by kwargs (optional)
+             
+             publisherId:	Your Impact Radius Publisher Id
+             adId:	        Your Impact Radius Advertisement Id
+             campaignId:	Your Impact Radius Campaign Id
+             format:    	Type of response required, allowed values [json, xml(deprecated)]. Default is json. 
+             upc:       	upc of the item
+
+        Returns:
+        -------
+         * products (List[WalmartProduct]) : List of products as objects
+            List[ https://walmart.io/docs/affiliate/item_response_groups ]
+        """
+        url = self.ENDPOINT + '/affil/product/v2/items'
+
+        params = kwargs
+        ids = get_items_ids(ids)
+        products = []
+
+        for idGroup in self._get_product_id_chunk(list(set(ids)), 20):
+            params['ids'] = idGroup
+            try:
+                response = self._send_request(url, **params)
+                for item in response['items']:
+                    products.append(WalmartProduct(item))
+            except InvalidRequestException as e:
+                log.debug(f"bulk_product_lookup failed during the request with {idGroup} ids")
+                log.debug(e)
         return products
 
     def product_recommendation(self, itemId:str) -> List[WalmartProduct]:
@@ -318,7 +381,6 @@ class WalmartIO:
         
         url = self.ENDPOINT + '/affil/product/v2/trends'
         
-        products = List[WalmartProduct]
         if publisherId:
             response = self._send_request(url, publisherId=publisherId)
         else:
@@ -340,8 +402,6 @@ class WalmartIO:
          }  
         """
         
-        # The header is valid for 180 seconds. 
-        # We only update the headers if 100 seconds have passed 
         timeInt = int(time.time()*1000)
 
         self.headers["WM_CONSUMER.INTIMESTAMP"] = str(timeInt)
@@ -388,6 +448,7 @@ class WalmartIO:
          * (`DailyCallLimit`) : 
             If the object has ran out of API calls for the day, the error is raised
         """
+        log.debug(f"Making connection to {url}")
 
         # Avoid format to be changed, always go for json
         kwargs.pop('format', None)
@@ -404,6 +465,9 @@ class WalmartIO:
         else:
             # Even if not specified in arguments, send request with richAttributes='true' by default
             request_params['richAttributes']='true'
+
+        if self.publisherId and 'publisherId' not in request_params:
+            request_params['publisherId'] = self.publisherId
 
         
         if not self._validate_call():
@@ -441,6 +505,8 @@ class WalmartIO:
 
         if self.daily_calls_remaining > 0:
             self.daily_calls_remaining -= 1
+            if self.daily_calls_remaining < 500:
+                log.warning("Fewer than 500 calls remain for the day")
             return True
         
         return False

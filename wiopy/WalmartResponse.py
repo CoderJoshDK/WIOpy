@@ -31,6 +31,16 @@ class WalmartResponse(object):
         """
         return self.response_handler._get_attribute(attr)
 
+    def keys(self):
+        return self.response_handler.keys()
+
+    def items(self):
+        return self.response_handler.items()
+
+    def values(self):
+        return self.response_handler.values()
+
+
 
 class WalmartProduct(WalmartResponse):
     """
@@ -828,6 +838,15 @@ class ResponseHandler:
 
     def __str__(self) -> str:
         return str(self.payload)
+
+    def keys(self):
+        return self.payload.keys()
+
+    def items(self):
+        return self.payload.items()
+
+    def values(self):
+        return self.payload.values()
 
     def _get_attribute(self, attr):
         """
