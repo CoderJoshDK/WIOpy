@@ -174,15 +174,17 @@ class WalmartIO:
         
         return products
 
-    def bulk_product_lookup(self, ids:Union[str, List[str]], **kwargs) -> List[WalmartProduct]:
+    def bulk_product_lookup(self, ids:Union[str, List[str]], amount:int=20, **kwargs):
         """
         Walmart product lookup for a bulk of products. It will keep going even if there are errors
+        This function is a generator that gives you #amount products at a time
 
         For more info: (https://walmart.io/docs/affiliate/product-lookup)
 
         Params:
         -------
          * ids : list of ids to lookup
+         * amount : the amount of products to yield at a time (max 20)
          * Named params passed in by kwargs (optional)
              
              publisherId:	Your Impact Radius Publisher Id
@@ -191,27 +193,27 @@ class WalmartIO:
              format:    	Type of response required, allowed values [json, xml(deprecated)]. Default is json. 
              upc:       	upc of the item
 
-        Returns:
+        Yield:
         -------
-         * products (List[WalmartProduct]) : List of products as objects
+         * List[WalmartProduct] : List of products as objects
             List[ https://walmart.io/docs/affiliate/item_response_groups ]
         """
         url = self.ENDPOINT + '/affil/product/v2/items'
 
         params = kwargs
         ids = get_items_ids(ids)
-        products = []
 
-        for idGroup in self._get_product_id_chunk(list(set(ids)), 20):
+        # Keep amount [1, 20]
+        amount = min(max(1, amount), 20)
+
+        for idGroup in self._get_product_id_chunk(list(set(ids)), amount):
             params['ids'] = idGroup
             try:
                 response = self._send_request(url, **params)
-                for item in response['items']:
-                    products.append(WalmartProduct(item))
+                yield [WalmartProduct(item) for item in response['items']]
             except InvalidRequestException as e:
                 log.debug(f"bulk_product_lookup failed during the request with {idGroup} ids")
                 log.debug(e)
-        return products
 
     def product_recommendation(self, itemId:str) -> List[WalmartProduct]:
         """

@@ -73,8 +73,18 @@ data = wiopy.product_lookup('33093101, 54518466, 516833054')
 data = wiopy.product_lookup(['33093101', '54518466', '516833054'])
 ```
 Remember: product_lookup always returns a list of [WalmartProducts](https://walmart.io/docs/affiliate/item_response_groups)  
-If you have a large number of products to lookup, use `bulk_product_lookup`. The function is almost the same, however, the bulk version does not raise errors.  
-Items are passed in as chunks of max size 20. If an error occurs on that call, all 20 will be lost. But the entire call will not be lost. 
+
+
+### [Bulk product lookup](https://walmart.io/docs/affiliate/product-lookup)
+`bulk_product_lookup` is similar to `product_lookup` however, the bulk version does not raise errors and it is a generator.  
+Items are passed in as chunks of max size 20. If an error occurs on that call, all items will be lost. But the entire call will not be lost.  
+```py
+data = wiopy.bulk_product_lookup('33093101, 54518466, 516833054', amount=1)
+for items in data:
+    for item in items:
+        print(item)
+```
+Response gives generator of [WalmartProducts](https://walmart.io/docs/affiliate/item_response_groups)  
 
 
 ### [Product Recommendation](https://walmart.io/docs/affiliate/product-recommendation)
