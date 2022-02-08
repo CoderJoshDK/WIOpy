@@ -27,7 +27,13 @@ from WIOpy import WalmartIO
 
 wiopy = WalmartIO(private_key_version='1', private_key_filename='./WM_IO_private_key.pem', consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
 data = wiopy.product_lookup('33093101')[0]
-```  
+```
+WIOpy also supports asynchronous calls. To use, everything will be the same but you must await a call and the contructed object is different.
+```py
+from WIOpy import AsyncWalmartIO
+wiopy = AsyncWalmartIO(...)
+data = await wiopy.product_lookup('33093101')[0]
+```
 
 ## Response Examples
 When making a call to the API, an object will be returned. That object is an object version of returned JSON.  
@@ -85,6 +91,11 @@ for items in data:
         print(item)
 ```
 Response gives generator of [WalmartProducts](https://walmart.io/docs/affiliate/item_response_groups)  
+If you are unfamiliar with async generators; to properly call the async version:
+```py
+data = wiopy.bulk_product_lookup('33093101, 54518466, 516833054')
+async for items in data:
+```
 
 
 ### [Product Recommendation](https://walmart.io/docs/affiliate/product-recommendation)

@@ -18,5 +18,12 @@ def get_items_ids(items: Union[str, list[str]]) -> list[str]:
 
     return items_ids
 
+def is_documented_by(original):
+    """Avoid copying the documentation"""
 
+    def wrapper(target):
+        target.__doc__ = original.__doc__
+        return target
+
+    return wrapper
 

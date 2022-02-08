@@ -81,7 +81,7 @@ class WalmartIO:
 
         self.publisherId = publisherId or None
 
-        log.info(f"Walmart IO connection with consumer id ending in {consumer_id[:-6]}")
+        log.info(f"Walmart IO connection with consumer id ending in {consumer_id[-6:]}")
 
     def catalog_product(self, **kwargs) -> WalmartCatalog:
         """
