@@ -235,7 +235,8 @@ class AsyncWalmartIO:
                 else:
                     if status_code == 400:
                         # Send exception detail when it is a 400 bad error
-                        raise InvalidRequestException(status_code, detail=await response.json()['errors'][0]['message'])
+                        jsonData = await response.json()
+                        raise InvalidRequestException(status_code, detail=jsonData['errors'][0]['message'])
                     else:
                         raise InvalidRequestException(status_code)
 
@@ -247,8 +248,8 @@ class AsyncWalmartIO:
 
         if self.daily_calls_remaining > 0:
             self.daily_calls_remaining -= 1
-            if self.daily_calls_remaining < 500:
-                log.warning("Fewer than 500 calls remain for the day")
+            if self.daily_calls_remaining == 500:
+                log.warning("500 calls remain for the day")
             return True
         
         return False
