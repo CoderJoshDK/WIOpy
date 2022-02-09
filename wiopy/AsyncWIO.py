@@ -114,6 +114,8 @@ class AsyncWalmartIO:
             except InvalidRequestException as e:
                 log.debug(f"bulk_product_lookup failed during the request with {idGroup} ids")
                 log.debug(e)
+            except Exception as e:
+                log.error(e)
 
     @is_documented_by(WalmartIO.product_recommendation)
     async def product_recommendation(self, itemId:str) -> List[WalmartProduct]:
