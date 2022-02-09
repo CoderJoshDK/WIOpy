@@ -506,8 +506,8 @@ class WalmartIO:
 
         if self.daily_calls_remaining > 0:
             self.daily_calls_remaining -= 1
-            if self.daily_calls_remaining < 500:
-                log.warning("Fewer than 500 calls remain for the day")
+            if self.daily_calls_remaining == 500:
+                log.warning("500 calls remain for the day")
             return True
         
         return False
