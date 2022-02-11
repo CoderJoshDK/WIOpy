@@ -472,7 +472,8 @@ class WalmartIO:
 
         
         if not self._validate_call():
-            raise DailyCallLimit("Too many calls in one day. If this is incorrect, try increasing `daily_calls`")
+            log.warning("Too many calls in one day. If this is incorrect, try increasing `daily_calls`")
+            #raise DailyCallLimit("Too many calls in one day. If this is incorrect, try increasing `daily_calls`")
 
         if request_params:
             response = requests.get(url, headers=self._get_headers(), params=request_params)

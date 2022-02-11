@@ -227,7 +227,8 @@ class AsyncWalmartIO:
 
         
         if not self._validate_call():
-            raise DailyCallLimit("Too many calls in one day. If this is incorrect, try increasing `daily_calls`")
+            log.warning("Too many calls in one day. If this is incorrect, try increasing `daily_calls`")
+            #raise DailyCallLimit("Too many calls in one day. If this is incorrect, try increasing `daily_calls`")
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self._get_headers(), params=request_params) as response:
