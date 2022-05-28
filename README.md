@@ -83,9 +83,9 @@ Remember: product_lookup always returns a list of [WalmartProducts](https://walm
 
 ### [Bulk product lookup](https://walmart.io/docs/affiliate/product-lookup)
 `bulk_product_lookup` is similar to `product_lookup` however, the bulk version does not raise errors and it is a generator.  
-Items are passed in as chunks of max size 20. If an error occurs on that call, all items will be lost. But the entire call will not be lost.  
+Items are passed in as chunks of max size 20. If an error occurs on that call, the same call will be retried based on the given amount. If error still occurs, all items will be lost. But the entire call will not be lost.  
 ```py
-data = wiopy.bulk_product_lookup('33093101, 54518466, 516833054', amount=1)
+data = wiopy.bulk_product_lookup('33093101, 54518466, 516833054', amount=1, retries=3)
 for items in data:
     for item in items:
         print(item)

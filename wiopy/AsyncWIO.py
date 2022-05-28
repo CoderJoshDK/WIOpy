@@ -97,7 +97,7 @@ class AsyncWalmartIO:
         return products
 
     @is_documented_by(WalmartIO.bulk_product_lookup)
-    async def bulk_product_lookup(self, ids:Union[str, List[str]], amount:int=20, **kwargs):
+    async def bulk_product_lookup(self, ids:Union[str, List[str]], amount:int=20, retries:int=1, **kwargs):
         url = self.ENDPOINT + '/affil/product/v2/items'
 
         params = kwargs
@@ -108,14 +108,17 @@ class AsyncWalmartIO:
 
         for idGroup in self._get_product_id_chunk(list(set(ids)), amount):
             params['ids'] = idGroup
-            try:
-                response = await self._send_request(url, **params)
-                yield [WalmartProduct(item) for item in response['items']]
-            except InvalidRequestException as e:
-                log.debug(f"bulk_product_lookup failed during the request with {idGroup} ids")
-                log.debug(e)
-            except Exception as e:
-                log.error(e)
+            for attempt in range(retries):
+                try:
+                    response = await self._send_request(url, **params)
+                    yield [WalmartProduct(item) for item in response['items']]
+                    break
+                except InvalidRequestException as e:
+                    if attempt == retries - 1:
+                        log.debug(f"bulk_product_lookup failed during the request with {idGroup} ids")
+                        log.debug(e)
+                except Exception as e:
+                    log.error(e)
 
     @is_documented_by(WalmartIO.product_recommendation)
     async def product_recommendation(self, itemId:str) -> List[WalmartProduct]:
