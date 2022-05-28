@@ -174,7 +174,7 @@ class WalmartIO:
         
         return products
 
-    def bulk_product_lookup(self, ids:Union[str, List[str]], amount:int=20, **kwargs):
+    def bulk_product_lookup(self, ids:Union[str, List[str]], amount:int=20, retries:int=1, **kwargs):
         """
         Walmart product lookup for a bulk of products. It will keep going even if there are errors
         This function is a generator that gives you #amount products at a time
@@ -208,12 +208,15 @@ class WalmartIO:
 
         for idGroup in self._get_product_id_chunk(list(set(ids)), amount):
             params['ids'] = idGroup
-            try:
-                response = self._send_request(url, **params)
-                yield [WalmartProduct(item) for item in response['items']]
-            except InvalidRequestException as e:
-                log.debug(f"bulk_product_lookup failed during the request with {idGroup} ids")
-                log.debug(e)
+            for attempt in range(retries):
+                try:
+                    response = self._send_request(url, **params)
+                    yield [WalmartProduct(item) for item in response['items']]
+                    break
+                except InvalidRequestException as e:
+                    if attempt == retries - 1:
+                        log.debug(f"bulk_product_lookup failed during the request with {idGroup} ids")
+                        log.debug(e)
 
     def product_recommendation(self, itemId:str) -> List[WalmartProduct]:
         """
