@@ -11,7 +11,7 @@ setup(
   author = 'CoderJosh',
   author_email = '74162303+CoderJoshDK@users.noreply.github.com',
   url = 'https://github.com/CoderJoshDK/WIOpy',
-  download_url = 'https://github.com/CoderJoshDK/WIOpy/archive/refs/tags/v_009_alpha.tar.gz',
+  download_url = 'https://github.com/CoderJoshDK/WIOpy/archive/refs/tags/v_01.tar.gz',
   keywords = ['API', 'Wrapper', 'Python', 'Walmart', 'Affiliate', 'WalmartIO', 'Async', 'AIOHTTP'],
   install_requires=[
           'requests',
