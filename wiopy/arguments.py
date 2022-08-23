@@ -1,12 +1,12 @@
 """Module with helper functions for managing arguments."""
 
 
-from typing import Union
+from typing import List, Union
 
 from .errors import InvalidParameterException
 
 
-def get_items_ids(items: Union[str, list[str]]) -> list[str]:
+def get_items_ids(items: Union[str, List[str]]) -> List[str]:
     if not isinstance(items, str) and not isinstance(items, list):
         raise InvalidParameterException(
             "Invalid items argument, it should be a string or List of strings"
@@ -26,7 +26,7 @@ def is_documented_by(original):
     """Avoid copying the documentation"""
 
     def wrapper(target):
-        target.__doc__ = original.__doc__
+        target.__doc__ = f"{target.__doc__}".format(original.__doc__)
         return target
 
     return wrapper
