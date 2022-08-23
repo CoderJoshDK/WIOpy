@@ -28,7 +28,7 @@ from WIOpy import WalmartIO
 wiopy = WalmartIO(private_key_version='1', private_key_filename='./WM_IO_private_key.pem', consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
 data = wiopy.product_lookup('33093101')[0]
 ```
-WIOpy also supports asynchronous calls. To use, everything will be the same but you must await a call and the contructed object is different.
+WIOpy also supports asynchronous calls. To use, everything will be the same but you must await a call and the constructed object is different.
 ```py
 from WIOpy import AsyncWalmartIO
 wiopy = AsyncWalmartIO(...)
@@ -64,7 +64,7 @@ The post browsed products API allows you to recommend products to someone based 
 ```py
 data = wiopy.post_browsed_products('54518466')
 ```
-Response gives top 10 relevent items to the given id
+Response gives top 10 relevant items to the given id
 
 
 ### [Product lookup](https://walmart.io/docs/affiliate/product-lookup)
@@ -153,7 +153,7 @@ WIOpy supports logging via the logging module. Configuration of the logging modu
 ```py
 import logging
 
-logging.basicCongif(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 ```
 
 -------
