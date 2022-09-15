@@ -1,6 +1,5 @@
 import base64
 import datetime
-import json
 import logging
 import time
 from typing import Generator, List, Union
@@ -9,7 +8,6 @@ import requests
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
-from requests.api import request
 
 from .arguments import get_items_ids
 from .errors import *

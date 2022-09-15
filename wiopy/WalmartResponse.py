@@ -1,7 +1,7 @@
 """Module for Walmart API responses in object form"""
 
 from html import unescape
-from typing import Any, List
+from typing import List
 
 
 class WalmartResponse(object):
