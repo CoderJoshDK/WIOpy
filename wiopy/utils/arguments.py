@@ -3,10 +3,7 @@
 
 from typing import List, Union
 
-__all__ = (
-    "get_items_ids",
-    "is_documented_by",
-)
+__all__ = ("get_items_ids",)
 
 
 def get_items_ids(items: Union[str, List[str]]) -> List[str]:
