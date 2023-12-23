@@ -23,16 +23,20 @@ $ pip install WIOpy --upgrade
 An example of creating a WIOpy connection   
 One important note is that you need to pass in the private key file *path*.  
 ```py
-from WIOpy import WalmartIO
-
-wiopy = WalmartIO(private_key_version='1', private_key_filename='./WM_IO_private_key.pem', consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
-data = wiopy.product_lookup('33093101')[0]
+from wiopy import WalmartIO
+walmart_io = WalmartIO(
+    private_key_version="1",
+    private_key_filename="./WM_IO_private_key.pem",
+    consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
+    publisherId="XXXXXXX",
+)
+data = walmart_io.product_lookup('33093101')[0]
 ```
 WIOpy also supports asynchronous calls. To use, everything will be the same but you must await a call and the constructed object is different.
 ```py
-from WIOpy import AsyncWalmartIO
-wiopy = AsyncWalmartIO(...)
-data = await wiopy.product_lookup('33093101')[0]
+from wiopy import AsyncWalmartIO
+async_walmart_io = AsyncWalmartIO(...)
+data = await async_walmart_io.product_lookup('33093101')[0]
 ```
 
 ## Response Examples
@@ -54,7 +58,7 @@ While there may be a response missing or a response not being converted to an ob
 ### [Catalog Product](https://walmart.io/docs/affiliate/paginated-items)
 Catalog Product API allows a developer to retrieve the products catalog in a paginated fashion. Catalog can be filtered by category, brand and/or any special offers like rollback, clearance etc.
 ```py
-data = wiopy.catalog_product(category='3944', maxId='8342714')
+data = walmart_io.catalog_product(category='3944', maxId='8342714')
 ```
 A catalog response contains category, format, nextPage, totalPages, and a list of items
 
@@ -62,7 +66,7 @@ A catalog response contains category, format, nextPage, totalPages, and a list o
 ### [Post Browsed Products](https://walmart.io/docs/affiliate/post-browsed-products)
 The post browsed products API allows you to recommend products to someone based on their product viewing history.
 ```py
-data = wiopy.post_browsed_products('54518466')
+data = walmart_io.post_browsed_products('54518466')
 ```
 Response gives top 10 relevant items to the given id
 
@@ -71,12 +75,12 @@ Response gives top 10 relevant items to the given id
 There are two ways to lookup a product   
 The first is to pass a single string in
 ```py
-data = wiopy.product_lookup('33093101')[0]
+data = walmart_io.product_lookup('33093101')[0]
 ```
 or you can pass a list of strings
 ```py
-data = wiopy.product_lookup('33093101, 54518466, 516833054')
-data = wiopy.product_lookup(['33093101', '54518466', '516833054'])
+data = walmart_io.product_lookup('33093101, 54518466, 516833054')
+data = walmart_io.product_lookup(['33093101', '54518466', '516833054'])
 ```
 Remember: product_lookup always returns a list of [WalmartProducts](https://walmart.io/docs/affiliate/item_response_groups)  
 
@@ -85,7 +89,7 @@ Remember: product_lookup always returns a list of [WalmartProducts](https://walm
 `bulk_product_lookup` is similar to `product_lookup` however, the bulk version does not raise errors and it is a generator.  
 Items are passed in as chunks of max size 20. If an error occurs on that call, the same call will be retried based on the given amount. If error still occurs, all items will be lost. But the entire call will not be lost.  
 ```py
-data = wiopy.bulk_product_lookup('33093101, 54518466, 516833054', amount=1, retries=3)
+data = walmart_io.bulk_product_lookup('33093101, 54518466, 516833054', amount=1, retries=3)
 for items in data:
     for item in items:
         print(item)
@@ -93,15 +97,16 @@ for items in data:
 Response gives generator of [WalmartProducts](https://walmart.io/docs/affiliate/item_response_groups)  
 If you are unfamiliar with async generators; to properly call the async version:
 ```py
-data = wiopy.bulk_product_lookup('33093101, 54518466, 516833054')
+data = async_walmart_io.bulk_product_lookup('33093101, 54518466, 516833054')
 async for items in data:
+    ...
 ```
 
 
 ### [Product Recommendation](https://walmart.io/docs/affiliate/product-recommendation)
 Get recommendations based on a given product id
 ```py
-data = wiopy.product_recommendation('54518466')
+data = walmart_io.product_recommendation('54518466')
 ```
 Response gives a list of related products
 
@@ -109,7 +114,7 @@ Response gives a list of related products
 ### [Reviews](https://walmart.io/docs/affiliate/reviews)
 The Reviews API gives you access to the extensive item reviews on Walmart that have been written by the users of Walmart.com
 ```py
-data = wiopy.reviews('33093101')
+data = walmart_io.reviews('33093101')
 ```
 Response gives review data
 
@@ -118,11 +123,11 @@ Response gives review data
 Search API allows text search on the Walmart.com catalogue and returns matching items available for sale online.
 ```py
 # Search for tv within electronics and sort by increasing price:
-data = wiopy.search('tv', categoryId='3944', sort='price', order='ascending')
+data = walmart_io.search('tv', categoryId='3944', sort='price', order='ascending')
 ```
 You can also add facets to your search
 ```py
-data = wiopy.search('tv', filter='brand:Samsung')
+data = walmart_io.search('tv', filter='brand:Samsung')
 ```
 The search response gives back a list of products and some meta data. It returns a `facets` element but there is no detail on the API about what it could return. It is a list of some unknown type
 
@@ -130,7 +135,7 @@ The search response gives back a list of products and some meta data. It returns
 ### [Stores](https://walmart.io/docs/affiliate/stores)
 The API can return a list of closest stores near a specified location. Either zip code or lon/lat  
 ```py
-data = wiopy.stores(lat=29.735577, lon=-95.511747)
+data = walmart_io.stores(lat=29.735577, lon=-95.511747)
 ```
 
 
@@ -138,14 +143,14 @@ data = wiopy.stores(lat=29.735577, lon=-95.511747)
 The taxonomy service exposes the taxonomy used to categorize items on Walmart.com.  
 Details about params is missing from docs
 ```py
-data = wiopy.taxonomy()
+data = walmart_io.taxonomy()
 ```
 
 
 ### [Trending Items](https://walmart.io/docs/affiliate/trending-items)
 The Trending Items API is designed to give the information on what is bestselling on Walmart.com right now.
 ```py
-data = wiopy.trending()
+data = walmart_io.trending()
 ```
 
 ## Logging
