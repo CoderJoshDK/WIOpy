@@ -1,0 +1,15 @@
+WM_IO_my_rsa_key_pair
+WM_IO_private_key.pem
+WM_IO_public_key.pem
+
+*.DS_Store
+.vscode
+__pycache__/
+dist/
+build/
+*.egg
+*.egg-info
+instructions.txt
+
+asyncTests.py
+tests.py

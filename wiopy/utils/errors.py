@@ -1,18 +1,12 @@
 """Module for errors that the API might encounter"""
 
+__all__ = ("InvalidRequestException",)
+
 
 class WalmartException(Exception):
     """
     Base Class for Walmart Api Exceptions.
     """
-
-
-class InvalidParameterException(WalmartException):
-    """
-    Exception thrown if an invalid parameter is passed to a function
-    """
-
-    pass
 
 
 class InvalidRequestException(WalmartException):
@@ -44,13 +38,3 @@ class InvalidRequestException(WalmartException):
             error_message, status_code
         )
         super(self.__class__, self).__init__(message)
-
-    pass
-
-
-class DailyCallLimit(WalmartException):
-    """
-    Exception for when user goes over the daily limit of API calls
-    """
-
-    pass

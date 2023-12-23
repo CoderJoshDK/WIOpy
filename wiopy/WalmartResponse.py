@@ -1,7 +1,75 @@
 """Module for Walmart API responses in object form"""
 
 from html import unescape
-from typing import List
+from typing import Any, List, Union
+
+__all__ = (
+    "WalmartCatalog",
+    "WalmartProduct",
+    "WalmartTaxonomy",
+    "WalmartStore",
+    "WalmartSearch",
+    "WalmartReview",
+    "WalmartResponse",
+    "OverallRating",
+    "ReviewStatistics",
+    "RatingDistributions",
+)
+
+
+class _ResponseHandler:
+    """
+    Exposes JSON data safely to get attributes
+    """
+
+    def __init__(self, payload: dict[str, Any]) -> None:
+        self.payload = payload
+
+    def __str__(self) -> str:
+        return str(self.payload)
+
+    def keys(self):
+        return self.payload.keys()
+
+    def items(self):
+        return self.payload.items()
+
+    def values(self):
+        return self.payload.values()
+
+    def _get_attribute(self, attr: str) -> Union[Any, None]:
+        """
+        Attempt to get the attribute from a payload
+        """
+        return self.payload.get(attr, None)
+
+    def _get_attribute_text(self, attr: str) -> Union[str, None]:
+        """
+        Some strings contains escaped html formatting tags.
+        This function cleans that up
+        """
+        try:
+            return unescape(self.payload.get(attr, None))
+        except TypeError:
+            return None
+
+    def _get_attribute_float(self, attr: str) -> Union[float, None, Any]:
+        """
+        Safe extraction of a float attribute from the payload
+        """
+        try:
+            return float(self.payload.get(attr, None))
+        except ValueError:
+            return self.payload.get(attr, None)
+
+    def _get_attribute_int(self, attr: str) -> Union[int, None, Any]:
+        """
+        Safe extraction of an int attribute from the payload
+        """
+        try:
+            return int(self.payload.get(attr, None))
+        except ValueError:
+            return self.payload.get(attr, None)
 
 
 class WalmartResponse(object):
@@ -9,8 +77,8 @@ class WalmartResponse(object):
     Base class for Walmart responses
     """
 
-    def __init__(self, payload) -> None:
-        self.response_handler = ResponseHandler(payload)
+    def __init__(self, payload: dict[str, Any]) -> None:
+        self.response_handler = _ResponseHandler(payload)
 
     def __str__(self) -> str:
         return str(self.response_handler)
@@ -826,65 +894,3 @@ class WalmartTaxonomy(WalmartResponse):
     def path(self):
         """Category path for this category."""
         return self.response_handler._get_attribute("path")
-
-
-class ResponseHandler:
-    """
-    Exposes JSON data safely to get attributes
-    """
-
-    def __init__(self, payload) -> None:
-        self.payload = payload
-
-    def __str__(self) -> str:
-        return str(self.payload)
-
-    def keys(self):
-        return self.payload.keys()
-
-    def items(self):
-        return self.payload.items()
-
-    def values(self):
-        return self.payload.values()
-
-    def _get_attribute(self, attr):
-        """
-        Attempt to get the attribute from a payload
-        """
-        try:
-            return self.payload[attr]
-        except KeyError:
-            return None
-
-    def _get_attribute_text(self, attr):
-        """
-        Some strings contains escaped html formatting tags.
-        This function cleans that up
-        """
-        try:
-            return unescape(self.payload[attr])
-        except KeyError:
-            return None
-
-    def _get_attribute_float(self, attr):
-        """
-        Safe extraction of a float attribute from the payload
-        """
-        try:
-            return float(self.payload[attr])
-        except KeyError:
-            return None
-        except ValueError:
-            return self.payload[attr]
-
-    def _get_attribute_int(self, attr):
-        """
-        Safe extraction of an int attribute from the payload
-        """
-        try:
-            return int(self.payload[attr])
-        except KeyError:
-            return None
-        except ValueError:
-            return self.payload[attr]

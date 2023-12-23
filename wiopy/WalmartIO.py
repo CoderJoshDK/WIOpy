@@ -2,19 +2,27 @@ import base64
 import datetime
 import logging
 import time
-from typing import Generator, List, Union
+from typing import Any, Generator, List, Union
 
 import requests
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 
-from .arguments import get_items_ids
-from .errors import *
-from .WalmartResponse import *
+from .utils import InvalidRequestException, get_items_ids, ttl_cache
+from .WalmartResponse import (
+    WalmartCatalog,
+    WalmartProduct,
+    WalmartReviewResponse,
+    WalmartSearch,
+    WalmartStore,
+    WalmartTaxonomy,
+)
 
 log = logging.getLogger(__name__)
 log.setLevel("DEBUG")
+
+__all__ = ("WalmartIO",)
 
 
 # Affiliates API only
@@ -32,6 +40,17 @@ class WalmartIO:
     publisherId can also be provided and it will auto populate every query.
     If you give publisherId as a kwarg, it will override the default one the class has
     """
+
+    __slots__ = (
+        "_private_key_version",
+        "_private_key",
+        "_consumer_id",
+        "headers",
+        "_update_daily_calls_time",
+        "daily_calls",
+        "daily_calls_remaining",
+        "publisherId",
+    )
 
     ENDPOINT = "https://developer.api.walmart.com/api-proxy/service"
 
@@ -165,7 +184,7 @@ class WalmartIO:
         params = kwargs
         ids = get_items_ids(ids)
         if len(ids) > 200:
-            log.warning(
+            log.debug(
                 "For large id lists, try using bulk_product_lookup. It will continue to run even if one chunk of ids raise an error"
             )
         products = []
@@ -209,7 +228,7 @@ class WalmartIO:
         params = kwargs
         ids = get_items_ids(ids)
 
-        # Keep amount [1, 20]
+        # Clamp amount [1, 20]
         amount = min(max(1, amount), 20)
 
         for idGroup in self._get_product_id_chunk(list(set(ids)), amount):
@@ -346,7 +365,7 @@ class WalmartIO:
          * store ('WalmartStore') : closest store to specified location
         """
         if not (("lat" in kwargs and "lon" in kwargs) or ("zip" in kwargs)):
-            raise InvalidParameterException("Missing lat & lon OR zip parameter")
+            raise ValueError("Missing lat & lon OR zip parameter")
 
         url = self.ENDPOINT + "/affil/product/v2/stores"
         response = self._send_request(url, **kwargs)
@@ -397,6 +416,7 @@ class WalmartIO:
             response = self._send_request(url)
         return [WalmartProduct(item) for item in response["items"]]
 
+    @ttl_cache(maxsize=2, ttl=170)
     def _get_headers(self) -> dict:
         """
         To make a call to the API, headers are needed. This function will return those headers for a call.
@@ -439,7 +459,7 @@ class WalmartIO:
 
         return self.headers
 
-    def _send_request(self, url, **kwargs) -> dict:
+    def _send_request(self, url, **kwargs) -> dict[str, Any]:
         """
         Sends a request to the Walmart API and return the HTTP response.
         -------
@@ -460,16 +480,12 @@ class WalmartIO:
         -------
          * (`InvalidRequestException`) :
             If the response's status code is different than 200 or 201, raise an InvalidRequestException with the appropriate code
-         * (`DailyCallLimit`) :
-            If the object has ran out of API calls for the day, the error is raised
         """
         log.debug(f"Making connection to {url}")
 
         # Avoid format to be changed, always go for json
         kwargs.pop("format", None)
-        request_params = {}
-        for key, value in kwargs.items():
-            request_params[key] = value
+        request_params = kwargs
 
         # Convert from native boolean python type to string 'true' or 'false'. This allows to set richAttributes with python boolean types
         if "richAttributes" in request_params and type(request_params["richAttributes"]) == bool:
@@ -488,22 +504,18 @@ class WalmartIO:
             log.warning(
                 "Too many calls in one day. If this is incorrect, try increasing `daily_calls`"
             )
-            # raise DailyCallLimit("Too many calls in one day. If this is incorrect, try increasing `daily_calls`")
 
-        if request_params:
-            response = requests.get(url, headers=self._get_headers(), params=request_params)
-        else:
-            response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), params=request_params)
         if response.status_code == 200 or response.status_code == 201:
             return response.json()
-        else:
-            if response.status_code == 400:
-                # Send exception detail when it is a 400 bad error
-                raise InvalidRequestException(
-                    response.status_code, detail=response.json()["errors"][0]["message"]
-                )
-            else:
-                raise InvalidRequestException(response.status_code)
+
+        if response.status_code == 400:
+            # Send exception detail when it is a 400 bad error
+            raise InvalidRequestException(
+                response.status_code, detail=response.json()["errors"][0]["message"]
+            )
+
+        raise InvalidRequestException(response.status_code)
 
     def _validate_call(self) -> bool:
         """
@@ -513,10 +525,6 @@ class WalmartIO:
         Returns:
         -------
          * (bool) : if there are still remaining calls for the day
-
-        Errors:
-        -------
-         * `DailyCallLimit` : raises an error if there are no remaining calls
         """
         if datetime.datetime.now() > self._update_daily_calls_time:
             self.daily_calls_remaining = self.daily_calls

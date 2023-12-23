@@ -1,4 +1,4 @@
-[![Python](https://img.shields.io/badge/Python->3.6-%23FFD140)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python->=3.8-%23FFD140)](https://www.python.org/)
 [![PyPI](https://img.shields.io/pypi/v/WIOpy)](https://pypi.org/project/WIOpy/)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/CoderJoshDK/WIOpy?include_prereleases)](https://github.com/CoderJoshDK/WIOpy)
 [![GitHub issues](https://img.shields.io/github/issues/CoderJoshDK/WIOpy)](https://github.com/CoderJoshDK/WIOpy/issues)
@@ -21,7 +21,7 @@ $ pip install WIOpy --upgrade
 
 ## How to use  
 An example of creating a WIOpy connection   
-One important note is that you need to pass in the private key file location.  
+One important note is that you need to pass in the private key file *path*.  
 ```py
 from WIOpy import WalmartIO
 

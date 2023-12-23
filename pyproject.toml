@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "WIOpy"
+version = "1.0.0"
+description = "A Python wrapper for the Walmart IO API"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+authors = [{ name = "CoderJoshDK" }]
+requires-python = ">= 3.8"
+dependencies = ["requests", "pycryptodome", "aiohttp"]
+keywords = [
+    "API",
+    "Wrapper",
+    "Walmart",
+    "Affiliate",
+    "WalmartIO",
+    "Async",
+    "AIOHTTP",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/CoderJoshDK/WIOpy"
+"Bug Reports" = "https://github.com/CoderJoshDK/WIOpy/issues"
+"Source" = "https://github.com/CoderJoshDK/WIOpy"
+
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+combine_as_imports = true
+combine_star = true
+line_length = 100
