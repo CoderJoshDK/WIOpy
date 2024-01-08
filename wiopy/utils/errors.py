@@ -1,20 +1,16 @@
-"""Module for errors that the API might encounter"""
+"""Module for errors that the API might encounter."""
 
 __all__ = ("InvalidRequestException",)
 
 
 class WalmartException(Exception):
-    """
-    Base Class for Walmart Api Exceptions.
-    """
+    """Base Class for Walmart Api Exceptions."""
 
 
 class InvalidRequestException(WalmartException):
-    """
-    Exception thrown if an invalid request response is thrown by Walmart
-    """
+    """Exception thrown if an invalid request response is thrown by Walmart."""
 
-    def __init__(self, status_code, **kwargs):
+    def __init__(self, status_code, **kwargs):  # noqa: D107
         error_message = "Error"
         if status_code == 400:
             error_message = "Bad Request"
@@ -34,7 +30,8 @@ class InvalidRequestException(WalmartException):
             error_message = "Service Unavailable/ API maintenance"
         elif status_code == 504:
             error_message = "Gateway Timeout"
-        message = "[Request failed] Walmart server answered with the following error: {0:s}. Status code: {1:d}".format(
-            error_message, status_code
+        message = (
+            "[Request failed] Walmart server answered with the following error: "
+            f"{error_message:s}. Status code: {status_code:d}"
         )
         super(self.__class__, self).__init__(message)

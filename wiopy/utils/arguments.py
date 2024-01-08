@@ -1,12 +1,11 @@
 """Module with helper functions for managing arguments."""
 
+from __future__ import annotations
 
-from typing import List, Union
-
-__all__ = ("get_items_ids",)
+__all__ = ("_get_items_ids",)
 
 
-def get_items_ids(items: Union[str, List[str]]) -> List[str]:
+def _get_items_ids(items: str | list[str]) -> list[str]:
     if not isinstance(items, (str, list)):
         raise TypeError("Invalid items argument, it should be a string or List of strings")
 

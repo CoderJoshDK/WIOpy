@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "WIOpy"
-version = "1.0.0"
+version = "1.1.0"
 description = "A Python wrapper for the Walmart IO API"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
@@ -37,17 +37,22 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.optional-dependencies]
+dev = ["ruff", "pre-commit"]
+
 [project.urls]
 "Homepage" = "https://github.com/CoderJoshDK/WIOpy"
 "Bug Reports" = "https://github.com/CoderJoshDK/WIOpy/issues"
 "Source" = "https://github.com/CoderJoshDK/WIOpy"
 
-
-[tool.black]
+[tool.ruff]
 line-length = 100
+fix = true
+target-version = "py38"
 
-[tool.isort]
-profile = "black"
-combine_as_imports = true
-combine_star = true
-line_length = 100
+unfixable = ["F841"]
+ignore = ["PLR0913", "ISC001", "PLR2004"]
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "W", "Q", "A", "I", "D",
+    "UP", "ASYNC", "FA", "ISC", "RET", "SIM", "ARG", "PL", "RUF"]

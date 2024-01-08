@@ -1,6 +1,4 @@
-"""
-Walmart IO Wrapper
-~~~~~~~~~~~~~~~~~~~
+"""Walmart IO Wrapper.
 
 A basic wrapper for the WalmartIO API.
 
@@ -8,6 +6,7 @@ A basic wrapper for the WalmartIO API.
 :license: MIT, see LICENSE for more details.
 
 """
+# ruff: noqa: F403
 
 from .AsyncWIO import *
 from .WalmartIO import *
