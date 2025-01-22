@@ -158,7 +158,7 @@ class AsyncWalmartIO:
         https://www.walmart.io/docs/affiliate/catalog-product
         """
         if "nextPage" in kwargs:
-            url = "https://developer.api.walmart" + kwargs.pop("nextPage")
+            url = "https://developer.api.walmart.com" + kwargs.pop("nextPage")
         else:
             url = self.ENDPOINT + "/affil/product/v2/paginated/items"
 
