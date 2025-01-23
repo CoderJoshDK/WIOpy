@@ -1,12 +1,16 @@
 [project]
 name = "WIOpy"
-version = "1.1.0"
+version = "1.1.1"
 description = "A Python wrapper for the Walmart IO API"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 authors = [{ name = "CoderJoshDK" }]
 requires-python = ">= 3.8"
-dependencies = ["requests", "pycryptodome", "aiohttp"]
+dependencies = [
+    "requests",
+    "pycryptodome",
+    "aiohttp"
+]
 keywords = [
     "API",
     "Wrapper",
@@ -51,6 +55,9 @@ select = ["E", "F", "B", "W", "Q", "A", "I", "D",
     "UP", "ASYNC", "FA", "ISC", "RET", "SIM", "ARG", "PL", "RUF"]
 ignore = ["PLR0913", "ISC001", "PLR2004", "D203", "D212"]
 unfixable = ["F841"]
+
+[tool.uv]
+package = true
 
 [build-system]
 requires = ["hatchling"]
