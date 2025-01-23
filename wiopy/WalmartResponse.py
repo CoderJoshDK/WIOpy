@@ -1,19 +1,20 @@
 """Module for Walmart API responses in object form."""
+
 from __future__ import annotations
 
 from html import unescape
 from typing import Any
 
 __all__ = (
+    "OverallRating",
+    "RatingDistributions",
+    "ReviewStatistics",
     "WalmartCatalog",
     "WalmartProduct",
-    "WalmartTaxonomy",
-    "WalmartStore",
-    "WalmartSearch",
     "WalmartReview",
-    "OverallRating",
-    "ReviewStatistics",
-    "RatingDistributions",
+    "WalmartSearch",
+    "WalmartStore",
+    "WalmartTaxonomy",
 )
 
 
@@ -74,7 +75,8 @@ class _WalmartResponse:
         return self.response_handler._get_attribute(key)
 
     def get_attr(self, attr: str):
-        """Another way to get attributes.
+        """
+        Another way to get attributes.
 
         The function call helps in case an attribute is added to Walmart API but not here.
 
@@ -82,6 +84,7 @@ class _WalmartResponse:
         ----------
         attr: str
             JSON attribute to get from product response
+
         """
         return self.response_handler._get_attribute(attr)
 
@@ -96,7 +99,8 @@ class _WalmartResponse:
 
 
 class WalmartProduct(_WalmartResponse):
-    """A Walmart Products as an object.
+    """
+    A Walmart Products as an object.
 
     Not all properties exist for all products. To get a more in-depth look, visit
     (https://walmart.io/docs/affiliate/item_response_groups)
@@ -109,7 +113,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def itemId(self):
-        """A positive integer that uniquely identifies an item.
+        """
+        A positive integer that uniquely identifies an item.
 
         `Base Response`
         """
@@ -117,7 +122,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def parentItemId(self):
-        """Item Id of the base version for this item.
+        """
+        Item Id of the base version for this item.
 
         This is present only if item is a variant of the base version,
         such as a different color or size.
@@ -126,7 +132,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def name(self):
-        """Standard name of the item.
+        """
+        Standard name of the item.
 
         `Base Response`
         """
@@ -134,7 +141,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def msrp(self):
-        """Manufacturer suggested retail price.
+        """
+        Manufacturer suggested retail price.
 
         `Base Response`
         """
@@ -142,7 +150,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def salePrice(self):
-        """Selling price for the item in USD.
+        """
+        Selling price for the item in USD.
 
         `Base Response`
         """
@@ -150,7 +159,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def upc(self):
-        """Unique Product Code.
+        """
+        Unique Product Code.
 
         `Base Response`
         """
@@ -158,7 +168,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def categoryPath(self):
-        """Breadcrumb for the item.
+        """
+        Breadcrumb for the item.
 
         This string describes the category level hierarchy that the item falls under.
 
@@ -168,7 +179,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def categoryNode(self):
-        """Category id for the category of this item.
+        """
+        Category id for the category of this item.
 
         This value can be passed to APIs to pull this item's category level information.
         """
@@ -181,7 +193,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def longDescription(self):
-        """Long description for the item.
+        """
+        Long description for the item.
 
         `Base Response`
         """
@@ -194,7 +207,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def thumbnailImage(self):
-        """Small size image for the item in jpeg format with dimensions 100 x 100 pixels.
+        """
+        Small size image for the item in jpeg format with dimensions 100 x 100 pixels.
 
         Returns URL of image
 
@@ -204,7 +218,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def mediumImage(self):
-        """Medium size image for the item in jpeg format with dimensions 180 x 180 pixels.
+        """
+        Medium size image for the item in jpeg format with dimensions 180 x 180 pixels.
 
         Returns URL of image
         """
@@ -212,7 +227,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def largeImage(self):
-        """Large size image for the item in jpeg format with dimensions 450 x 450 pixels.
+        """
+        Large size image for the item in jpeg format with dimensions 450 x 450 pixels.
 
         Returns URL of image
         """
@@ -220,7 +236,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def productTrackingUrl(self):
-        """Affiliate URL.
+        """
+        Affiliate URL.
 
         Deep linked URL that directly links to the product page of this item on walmart.com, and
         uniquely identifies the affiliate sending this request via a impact radius tracking id
@@ -234,17 +251,20 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def ninetySevenCentShipping(self):
-        """Whether the item qualifies for 97 cent shipping.
+        """
+        Whether the item qualifies for 97 cent shipping.
 
         Returns
         -------
         Bool
+
         """
         return self.response_handler._get_attribute("ninetySevenCentShipping")
 
     @property
     def standardShipRate(self):
-        """Shipping rate for this item for standard shipping (3 to 5 business days).
+        """
+        Shipping rate for this item for standard shipping (3 to 5 business days).
 
         `Base Response`
         """
@@ -267,7 +287,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def marketplace(self):
-        """Whether this item is from one of the Walmart marketplace sellers.
+        """
+        Whether this item is from one of the Walmart marketplace sellers.
 
         In this case, the item cannot be returned back to Walmart stores or walmart.com.
         It must be returned to the marketplace seller in accordance with their returns policy.
@@ -288,11 +309,13 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def freeShipToStore(self):
-        """Whether the item qualifies for free shipping to the nearest Walmart store.
+        """
+        Whether the item qualifies for free shipping to the nearest Walmart store.
 
         Returns
         -------
         Bool
+
         """
         return self.response_handler._get_attribute("freeShipToStore")
 
@@ -303,7 +326,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def availableOnline(self):
-        """Whether the item is currently available for sale on Walmart.com.
+        """
+        Whether the item is currently available for sale on Walmart.com.
 
         `Base Response`
         """
@@ -311,7 +335,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def stock(self):
-        """Indicative quantity of the item available online.
+        """
+        Indicative quantity of the item available online.
 
         Possible values are [Available, Limited Supply, Last few items, Not available].
          * Limited supply: can go out of stock in the near future,
@@ -348,7 +373,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def offerType(self):
-        """Indicates whether the item is sold ONLINE_ONLY, ONLINE_AND_STORE, STORE_ONLY.
+        """
+        Indicates whether the item is sold ONLINE_ONLY, ONLINE_AND_STORE, STORE_ONLY.
 
         `Base Response`
         """
@@ -371,7 +397,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def affiliateAddToCartUrl(self):
-        """Affiliate Url for directly sending user to cart.
+        """
+        Affiliate Url for directly sending user to cart.
 
         Impact Radius tracking url to add the item on Walmart.com cart page and uniquely identifies
         the affiliate via a impact radius tracking id. The impact radius tracking id is used by
@@ -397,7 +424,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def imageEntities(self):
-        """Primary and secondary images of the item on Walmart.com.
+        """
+        Primary and secondary images of the item on Walmart.com.
 
         Each image are in thumbnail, medium and large sizes
 
@@ -407,7 +435,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def isTwoDayShippingEligible(self):
-        """Indicates whether the item is eligible for two day shipping.
+        """
+        Indicates whether the item is eligible for two day shipping.
 
         `Base Response`
         """
@@ -420,7 +449,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def giftOptions(self):
-        """Indicates the gift options of the item.
+        """
+        Indicates the gift options of the item.
 
         Whether gift wrap, gift message, gift receipt are allowed.
 
@@ -430,7 +460,8 @@ class WalmartProduct(_WalmartResponse):
 
     @property
     def bestMarketplacePrice(self):
-        """Information about best price on marketplace.
+        """
+        Information about best price on marketplace.
 
         Including:
             price, sellerInfo, standardShipRate, twoThreeDayShippingRate, availableOnline,
@@ -456,13 +487,14 @@ class WalmartCatalog(_WalmartResponse):
         return self.response_handler._get_attribute("category")
 
     @property
-    def format(self):  # noqa: A003
+    def format(self):
         """Format of response. Should be json."""
         return self.response_handler._get_attribute("format")
 
     @property
     def nextPage(self):
-        """URI of next page.
+        """
+        URI of next page.
 
         Pass this back into `catalog_product` as `nextPage=data.nextPage` to get next page response.
         """
@@ -686,7 +718,7 @@ class WalmartStore(_WalmartResponse):
         return self.response_handler._get_attribute("stateProvCode")
 
     @property
-    def zip(self):  # noqa: A003
+    def zip(self):
         """Zip Code."""
         return self.response_handler._get_attribute("zip")
 
@@ -745,8 +777,9 @@ class WalmartTaxonomy(_WalmartResponse):
     """Taxonomy used to categorize items on Walmart.com."""
 
     @property
-    def id(self):  # noqa: A003
-        """Category id for this category.
+    def id(self):
+        """
+        Category id for this category.
 
         These values are used as an input parameter to other APIs.
         """

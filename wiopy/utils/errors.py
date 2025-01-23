@@ -14,7 +14,7 @@ class InvalidRequestException(WalmartException):
         error_message = "Error"
         if status_code == 400:
             error_message = "Bad Request"
-            if "detail" in kwargs and kwargs["detail"]:
+            if kwargs.get("detail"):
                 error_message = error_message + " - " + str(kwargs["detail"])
         elif status_code == 403:
             error_message = "Forbidden"

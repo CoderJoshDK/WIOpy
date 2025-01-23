@@ -6,8 +6,9 @@ __all__ = ("_get_items_ids",)
 
 
 def _get_items_ids(items: str | list[str]) -> list[str]:
-    if not isinstance(items, (str, list)):
-        raise TypeError("Invalid items argument, it should be a string or List of strings")
+    assert isinstance(items, (str, list)), TypeError(
+        "Invalid items argument, it should be a string or List of strings"
+    )
 
     if isinstance(items, str):
         items_ids = items.split(",")

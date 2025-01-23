@@ -1,4 +1,5 @@
 """Internal Module for header cache."""
+
 import time
 from functools import lru_cache, update_wrapper
 from math import floor

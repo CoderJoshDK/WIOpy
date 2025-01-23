@@ -1,7 +1,3 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "WIOpy"
 version = "1.1.0"
@@ -50,9 +46,12 @@ line-length = 100
 fix = true
 target-version = "py38"
 
-unfixable = ["F841"]
-ignore = ["PLR0913", "ISC001", "PLR2004"]
-
 [tool.ruff.lint]
 select = ["E", "F", "B", "W", "Q", "A", "I", "D",
     "UP", "ASYNC", "FA", "ISC", "RET", "SIM", "ARG", "PL", "RUF"]
+ignore = ["PLR0913", "ISC001", "PLR2004", "D203", "D212"]
+unfixable = ["F841"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,7 +1,9 @@
-"""Walmart IO Sync API.
+"""
+Walmart IO Sync API.
 
 Please read the Walmart Docs for up to date list of endpoints and parameters
 """
+
 from __future__ import annotations
 
 import base64
@@ -33,7 +35,8 @@ __all__ = ("WalmartIO",)
 
 # Affiliates API only
 class WalmartIO:
-    """The main Walmart IO API interface.
+    """
+    The main Walmart IO API interface.
 
     Optional:
     -------
@@ -48,16 +51,17 @@ class WalmartIO:
     ...         private_key_filename='./WM_IO_private_key.pem',
     ...         consumer_id='XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
     ...     )
+
     """
 
     __slots__ = (
-        "_private_key_version",
-        "_private_key",
         "_consumer_id",
-        "headers",
+        "_private_key",
+        "_private_key_version",
         "_update_daily_calls_time",
         "daily_calls",
         "daily_calls_remaining",
+        "headers",
         "publisherId",
     )
 
@@ -72,7 +76,8 @@ class WalmartIO:
         daily_calls: int = 5000,
         publisherId: str | None = None,
     ) -> None:
-        """WalmartIO API Connection.
+        """
+        WalmartIO API Connection.
 
         Parameters
         ----------
@@ -95,6 +100,7 @@ class WalmartIO:
         -----
         To Generate the public and private key (https://walmart.io/key-tutorial).
         The filename will look something like `./WM_IO_private_key.pem`
+
         """
         self._private_key_version = private_key_version
 
@@ -117,7 +123,8 @@ class WalmartIO:
         log.info(f"Walmart IO connection with consumer id ending in {consumer_id[-6:]}")
 
     def catalog_product(self, **kwargs) -> WalmartCatalog:
-        """Catalog Product Endpoint.
+        """
+        Catalog Product Endpoint.
 
         Allows a developer to retrieve the products catalog in a paginated fashion.
         Catalog can be filtered by category, brand and/or any special offers like rollback,
@@ -156,6 +163,7 @@ class WalmartIO:
         References
         ----------
         https://www.walmart.io/docs/affiliate/catalog-product
+
         """
         if "nextPage" in kwargs:
             url = "https://developer.api.walmart.com" + kwargs.pop("nextPage")
@@ -166,7 +174,8 @@ class WalmartIO:
         return WalmartCatalog(response)
 
     def post_browsed_products(self, itemId: str) -> list[WalmartProduct]:
-        """Post Browsed Products Endpoint.
+        """
+        Post Browsed Products Endpoint.
 
         Allows you to recommend products to someone based on their product viewing history.
 
@@ -196,13 +205,15 @@ class WalmartIO:
         References
         ----------
         https://www.walmart.io/docs/affiliate/post-browsed-products
+
         """
         url = f"{self.ENDPOINT}/affil/product/v2/postbrowse?itemId={itemId}"
         response = self._send_request(url)
         return [WalmartProduct(item) for item in response]
 
     def product_lookup(self, ids: str | list[str], **kwargs) -> list[WalmartProduct]:
-        """Walmart product lookup.
+        """
+        Walmart product lookup.
 
         For more info: (https://walmart.io/docs/affiliate/product-lookup)
 
@@ -228,6 +239,7 @@ class WalmartIO:
         References
         ----------
         https://www.walmart.io/docs/affiliate/product-lookup
+
         """
         url = self.ENDPOINT + "/affil/product/v2/items"
 
@@ -251,7 +263,8 @@ class WalmartIO:
     def bulk_product_lookup(
         self, ids: str | list[str], amount: int = 20, retries: int = 1, **kwargs
     ):
-        """Walmart product lookup for a bulk of products.
+        """
+        Walmart product lookup for a bulk of products.
 
         It will keep going even if there are errors
         This function is a generator that gives you #amount products at a time
@@ -290,6 +303,7 @@ class WalmartIO:
         References
         ----------
         https://www.walmart.io/docs/affiliate/product-lookup
+
         """
         url = self.ENDPOINT + "/affil/product/v2/items"
 
@@ -314,7 +328,8 @@ class WalmartIO:
                         log.debug(e)
 
     def product_recommendation(self, itemId: str) -> list[WalmartProduct]:
-        """Product Recommendation Endpoint.
+        """
+        Product Recommendation Endpoint.
 
         Extension driven by the science that powers the recommended products container on
         Walmart.com. Walmart has parsed 100s of millions of transactions over their product
@@ -344,13 +359,15 @@ class WalmartIO:
         References
         ----------
         https://www.walmart.io/docs/affiliate/product-recommendation
+
         """
         url = f"{self.ENDPOINT}/affil/product/v2/nbp?itemId={itemId}"
         response = self._send_request(url)
         return [WalmartProduct(item) for item in response]
 
     def reviews(self, itemId: str, **kwargs) -> WalmartReviewResponse:
-        """Reviews Endpoint.
+        """
+        Reviews Endpoint.
 
         Gives you access to the extensive item reviews on Walmart that have been written by the
         users of Walmart.com. This is great content for enriching item descriptions. You are free
@@ -376,6 +393,7 @@ class WalmartIO:
         References
         ----------
         https://www.walmart.io/docs/affiliate/product-recommendation
+
         """
         if "nextPage" in kwargs:
             page = kwargs.pop("nextPage").split("page=")[1]
@@ -386,7 +404,8 @@ class WalmartIO:
         return WalmartReviewResponse(response)
 
     def search(self, query: str, **kwargs) -> WalmartSearch:
-        """Search Endpoint.
+        """
+        Search Endpoint.
 
         Text search on the Walmart.com catalog and returns matching items available for sale online.
 
@@ -441,6 +460,7 @@ class WalmartIO:
         References
         ----------
         https://walmart.io/docs/affiliate/search
+
         """
         if "facet" in kwargs:
             facet = kwargs["facet"]
@@ -461,7 +481,8 @@ class WalmartIO:
         return WalmartSearch(response)
 
     def stores(self, **kwargs) -> list[WalmartStore]:
-        """Store Locator Endpoint.
+        """
+        Store Locator Endpoint.
 
         Locate nearest Walmart Stores via API. It lets users search for stores by
         latitude and longitude, and by zip code.
@@ -476,6 +497,7 @@ class WalmartIO:
         Returns
         -------
         store ('WalmartStore') : closest store to specified location
+
         """
         if not (("lat" in kwargs and "lon" in kwargs) or ("zip" in kwargs)):
             raise ValueError("Missing lat & lon OR zip parameter")
@@ -485,7 +507,8 @@ class WalmartIO:
         return [WalmartStore(store) for store in response]
 
     def taxonomy(self, **kwargs) -> WalmartTaxonomy:
-        """Taxonomy Endpoint.
+        """
+        Taxonomy Endpoint.
 
         Taxonomy used to categorize items on Walmart.com.
 
@@ -503,12 +526,14 @@ class WalmartIO:
         ----------
         **kwargs
             unknown; WalmartIO documentation does not expose what the acceptable
+
         """
         url = self.ENDPOINT + "/affil/product/v2/taxonomy"
         return WalmartTaxonomy(self._send_request(url, **kwargs))
 
     def trending(self, publisherId=None) -> list[WalmartProduct]:
-        """Trending Items Endpoint.
+        """
+        Trending Items Endpoint.
 
         The Trending Items API is designed to give the information on what is bestselling on
         Walmart.com right now. The items returned by this service are a curated list based on the
@@ -525,6 +550,7 @@ class WalmartIO:
         -------
         products: list of `WalmartProduct`
             a list of walmart products on the trending list
+
         """
         url = self.ENDPOINT + "/affil/product/v2/trends"
 
@@ -536,7 +562,8 @@ class WalmartIO:
 
     @_ttl_cache(maxsize=2, ttl=170)
     def _get_headers(self) -> dict:
-        """Get the headers required for making an API call.
+        """
+        Get the headers required for making an API call.
 
         References
         ----------
@@ -550,6 +577,7 @@ class WalmartIO:
              'WM_SEC.AUTH_SIGNATURE' : signature_enc,
              'WM_SEC.KEY_VERSION' : keyVersion
          }
+
         """
         timeInt = int(time.time() * 1000)
 
@@ -580,7 +608,8 @@ class WalmartIO:
         return self.headers
 
     def _send_request(self, url, **kwargs) -> Any:
-        """Send a request to the Walmart API and return the HTTP response.
+        """
+        Send a request to the Walmart API and return the HTTP response.
 
         Format is json by default and cannot be changed through kwargs. xml is deprecated.
         Send richAttributes='true' by default. Can be set to 'false' through kwargs
@@ -601,6 +630,7 @@ class WalmartIO:
         InvalidRequestException:
             If the response's status code is different than 200 or 201,
             raise an InvalidRequestException with the appropriate code
+
         """
         log.debug(f"Making connection to {url}")
 
@@ -642,7 +672,8 @@ class WalmartIO:
         raise InvalidRequestException(response.status_code)
 
     def _validate_call(self) -> bool:
-        """Check if the caller has API calls remaining.
+        """
+        Check if the caller has API calls remaining.
 
         If there are remaining calls, check to see if the headers need to be updated.
         If so, update them.
@@ -651,6 +682,7 @@ class WalmartIO:
         -------
         bool:
             if there are still remaining calls for the day
+
         """
         if datetime.datetime.now() > self._update_daily_calls_time:
             self.daily_calls_remaining = self.daily_calls
