@@ -168,12 +168,12 @@ class AsyncWalmartIO:
         https://www.walmart.io/docs/affiliate/catalog-product
 
         """
-        if next_page := kwargs.get("nextPage"):
+        if next_page := kwargs.pop("nextPage", ""):
             assert isinstance(next_page, str), ValueError(
                 "Expected type string for kwarg 'nextPage'"
             )
             url = "https://developer.api.walmart.com" + next_page
-            return WalmartCatalog(await self._send_request(url, **kwargs))
+            return WalmartCatalog(await self._send_request(url))
 
         url = self.ENDPOINT + "/affil/product/v2/paginated/items"
         return WalmartCatalog(await self._send_request(url, **kwargs))
