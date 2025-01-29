@@ -267,7 +267,7 @@ class WalmartIO:
 
     def bulk_product_lookup(
         self, ids: str | list[str], amount: int = 20, retries: int = 1, **kwargs: str
-    ):
+    ) -> Generator[list[WalmartProduct]]:
         """
         Walmart product lookup for a bulk of products.
 

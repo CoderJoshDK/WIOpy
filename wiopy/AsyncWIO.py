@@ -10,7 +10,7 @@ import base64
 import datetime
 import logging
 import time
-from collections.abc import Generator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any, Final
 
 import aiohttp
@@ -271,7 +271,7 @@ class AsyncWalmartIO:
         amount: int = 20,
         retries: int = 1,
         **kwargs: str,
-    ):
+    ) -> AsyncGenerator[list[WalmartProduct]]:
         """
         Walmart product lookup for a bulk of products.
 
