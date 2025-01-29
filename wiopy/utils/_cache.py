@@ -1,27 +1,30 @@
 """Internal Module for header cache."""
 
+from __future__ import annotations
+
 import time
 from functools import lru_cache, update_wrapper
 from math import floor
-from typing import Any, Callable
+from typing import Callable
 
-__all__ = ("_ttl_cache",)
+__all__ = ("ttl_cache",)
 
 
-def _ttl_cache(maxsize: int = 10, typed: bool = False, ttl: int = -1):
+def ttl_cache[C](maxsize: int = 10, typed: bool = False, ttl: int = -1):
+    """Generate a TTL cache to be used only for the headers."""
     if ttl <= 0:
         ttl = 65536
 
     hash_gen = _ttl_hash_gen(ttl)
 
-    def wrapper(func: Callable) -> Callable:
+    def wrapper(func: Callable[[C], dict[str, str]]) -> Callable[[C], dict[str, str]]:
         @lru_cache(maxsize, typed)
-        def ttl_func(ttl_hash, *args, **kwargs):  # noqa: ARG001
-            return func(*args, **kwargs)
+        def ttl_func(self: C, _ttl_hash: int):
+            return func(self)
 
-        def wrapped(*args, **kwargs) -> Any:
+        def wrapped(self: C) -> dict[str, str]:
             th = next(hash_gen)
-            return ttl_func(th, *args, **kwargs)
+            return ttl_func(self, th)
 
         return update_wrapper(wrapped, func)
 

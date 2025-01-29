@@ -72,6 +72,16 @@ data = walmart_io.catalog_product(category='3944', maxId='8342714')
 
 A catalog response contains category, format, nextPage, totalPages, and a list of items
 
+The returned API data is paginated. To get the next page, pass in `data.nextPage` as a kwarg.
+All other kwargs will be stripped out. They will be embed in the nextPage response.
+
+```py
+data = walmart_io.catalog_product(category="3944", maxId="8342714")
+next_data = walmart_io.catalog_product(nextPage=data.nextPage)
+# or
+next_data = walmart_io.catalog_product(category="3944", maxId="8342714", nextPage=data.nextPage) 
+```
+
 ### [Post Browsed Products](https://walmart.io/docs/affiliate/post-browsed-products)
 
 The post browsed products API allows you to recommend products to someone based on their product viewing history.
