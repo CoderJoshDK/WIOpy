@@ -10,14 +10,15 @@ import base64
 import datetime
 import logging
 import time
-from typing import Any, Generator
+from collections.abc import Generator
+from typing import Any, Final
 
 import requests
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 
-from .utils import InvalidRequestException, _get_items_ids, _ttl_cache
+from .utils import InvalidRequestException, get_items_ids, ttl_cache
 from .WalmartResponse import (
     WalmartCatalog,
     WalmartProduct,
@@ -54,7 +55,7 @@ class WalmartIO:
 
     """
 
-    __slots__ = (
+    __slots__: tuple[str, ...] = (
         "_consumer_id",
         "_private_key",
         "_private_key_version",
@@ -65,7 +66,7 @@ class WalmartIO:
         "publisherId",
     )
 
-    ENDPOINT = "https://developer.api.walmart.com/api-proxy/service"
+    ENDPOINT: Final[str] = "https://developer.api.walmart.com/api-proxy/service"
 
     def __init__(
         self,
@@ -102,27 +103,29 @@ class WalmartIO:
         The filename will look something like `./WM_IO_private_key.pem`
 
         """
-        self._private_key_version = private_key_version
+        self._private_key_version: Final[str] = private_key_version
 
         # IOError is triggered if the file cannot be opened
         with open(private_key_filename) as f:
-            self._private_key = RSA.importKey(f.read())
+            self._private_key: Final[RSA.RsaKey] = RSA.importKey(f.read())
 
-        self._consumer_id = consumer_id
+        self._consumer_id: Final[str] = consumer_id
 
-        self.headers = {}
+        self.headers: dict[str, str] = {}
         self.headers["WM_CONSUMER.ID"] = consumer_id
         self.headers["WM_SEC.KEY_VERSION"] = private_key_version
 
-        self._update_daily_calls_time = datetime.datetime.now() + datetime.timedelta(days=1)
-        self.daily_calls = daily_calls
-        self.daily_calls_remaining = daily_calls
+        self._update_daily_calls_time: datetime.datetime = (
+            datetime.datetime.now() + datetime.timedelta(days=1)
+        )
+        self.daily_calls: int = daily_calls
+        self.daily_calls_remaining: int = daily_calls
 
-        self.publisherId = publisherId or None
+        self.publisherId: str | None = publisherId or None
 
         log.info(f"Walmart IO connection with consumer id ending in {consumer_id[-6:]}")
 
-    def catalog_product(self, **kwargs) -> WalmartCatalog:
+    def catalog_product(self, **kwargs: str | int | bool) -> WalmartCatalog:
         """
         Catalog Product Endpoint.
 
@@ -165,13 +168,15 @@ class WalmartIO:
         https://www.walmart.io/docs/affiliate/catalog-product
 
         """
-        if "nextPage" in kwargs:
-            url = "https://developer.api.walmart.com" + kwargs.pop("nextPage")
-        else:
-            url = self.ENDPOINT + "/affil/product/v2/paginated/items"
+        if next_page := kwargs.get("nextPage"):
+            assert isinstance(next_page, str), ValueError(
+                "Expected type string for kwarg 'nextPage'"
+            )
+            url = "https://developer.api.walmart.com" + next_page
+            return WalmartCatalog(self._send_request(url, **kwargs))
 
-        response = self._send_request(url, **kwargs)
-        return WalmartCatalog(response)
+        url = self.ENDPOINT + "/affil/product/v2/paginated/items"
+        return WalmartCatalog(self._send_request(url, **kwargs))
 
     def post_browsed_products(self, itemId: str) -> list[WalmartProduct]:
         """
@@ -211,7 +216,7 @@ class WalmartIO:
         response = self._send_request(url)
         return [WalmartProduct(item) for item in response]
 
-    def product_lookup(self, ids: str | list[str], **kwargs) -> list[WalmartProduct]:
+    def product_lookup(self, ids: str | list[str], **kwargs: str) -> list[WalmartProduct]:
         """
         Walmart product lookup.
 
@@ -244,13 +249,13 @@ class WalmartIO:
         url = self.ENDPOINT + "/affil/product/v2/items"
 
         params = kwargs
-        ids = _get_items_ids(ids)
+        ids = get_items_ids(ids)
         if len(ids) > 200:
             log.debug(
                 "For large id lists, try using bulk_product_lookup."
                 "It will continue to run even if one chunk of ids raise an error"
             )
-        products = []
+        products: list[WalmartProduct] = []
 
         for idGroup in self._get_product_id_chunk(list(set(ids)), 20):
             params["ids"] = idGroup
@@ -261,7 +266,7 @@ class WalmartIO:
         return products
 
     def bulk_product_lookup(
-        self, ids: str | list[str], amount: int = 20, retries: int = 1, **kwargs
+        self, ids: str | list[str], amount: int = 20, retries: int = 1, **kwargs: str
     ):
         """
         Walmart product lookup for a bulk of products.
@@ -286,8 +291,6 @@ class WalmartIO:
                 Your Impact Radius Advertisement Id
              campaignId:
                 Your Impact Radius Campaign Id
-             format:
-                Type of response required, allowed values [json, xml(deprecated)]. Default is json.
              upc:
                 upc of the item
 
@@ -308,7 +311,7 @@ class WalmartIO:
         url = self.ENDPOINT + "/affil/product/v2/items"
 
         params = kwargs
-        ids = _get_items_ids(ids)
+        ids = get_items_ids(ids)
 
         # Clamp amount [1, 20]
         amount = min(max(1, amount), 20)
@@ -365,7 +368,7 @@ class WalmartIO:
         response = self._send_request(url)
         return [WalmartProduct(item) for item in response]
 
-    def reviews(self, itemId: str, **kwargs) -> WalmartReviewResponse:
+    def reviews(self, itemId: str, **kwargs: str) -> WalmartReviewResponse:
         """
         Reviews Endpoint.
 
@@ -403,7 +406,7 @@ class WalmartIO:
         response = self._send_request(url, **kwargs)
         return WalmartReviewResponse(response)
 
-    def search(self, query: str, **kwargs) -> WalmartSearch:
+    def search(self, query: str, **kwargs: str | int) -> WalmartSearch:
         """
         Search Endpoint.
 
@@ -480,7 +483,7 @@ class WalmartIO:
         response = self._send_request(url, **kwargs)
         return WalmartSearch(response)
 
-    def stores(self, **kwargs) -> list[WalmartStore]:
+    def stores(self, **kwargs: float) -> list[WalmartStore]:
         """
         Store Locator Endpoint.
 
@@ -503,10 +506,11 @@ class WalmartIO:
             raise ValueError("Missing lat & lon OR zip parameter")
 
         url = self.ENDPOINT + "/affil/product/v2/stores"
+
         response = self._send_request(url, **kwargs)
         return [WalmartStore(store) for store in response]
 
-    def taxonomy(self, **kwargs) -> WalmartTaxonomy:
+    def taxonomy(self) -> WalmartTaxonomy:
         """
         Taxonomy Endpoint.
 
@@ -522,16 +526,11 @@ class WalmartIO:
         For example, Search API can be restricted to search within a category by supplying id as
         per the taxonomy.
 
-        Parameters
-        ----------
-        **kwargs
-            unknown; WalmartIO documentation does not expose what the acceptable
-
         """
         url = self.ENDPOINT + "/affil/product/v2/taxonomy"
-        return WalmartTaxonomy(self._send_request(url, **kwargs))
+        return WalmartTaxonomy(self._send_request(url))
 
-    def trending(self, publisherId=None) -> list[WalmartProduct]:
+    def trending(self, publisherId: str | None = None) -> list[WalmartProduct]:
         """
         Trending Items Endpoint.
 
@@ -555,13 +554,15 @@ class WalmartIO:
         url = self.ENDPOINT + "/affil/product/v2/trends"
 
         if publisherId:
-            response = self._send_request(url, publisherId=publisherId)
+            response: dict[str, list[dict[str, Any]]] = self._send_request(
+                url, publisherId=publisherId
+            )
         else:
             response = self._send_request(url)
         return [WalmartProduct(item) for item in response["items"]]
 
-    @_ttl_cache(maxsize=2, ttl=170)
-    def _get_headers(self) -> dict:
+    @ttl_cache(maxsize=2, ttl=170)
+    def _get_headers(self) -> dict[str, str]:
         """
         Get the headers required for making an API call.
 
@@ -607,7 +608,7 @@ class WalmartIO:
 
         return self.headers
 
-    def _send_request(self, url, **kwargs) -> Any:
+    def _send_request(self, url: str, **kwargs: str | int | float | bool) -> Any:
         """
         Send a request to the Walmart API and return the HTTP response.
 
@@ -634,8 +635,8 @@ class WalmartIO:
         """
         log.debug(f"Making connection to {url}")
 
-        # Avoid format to be changed, always go for json
-        kwargs.pop("format", None)
+        # Deprecated option "format". Only supported format is JSON.
+        _ = kwargs.pop("format", None)
         request_params = kwargs
 
         # Convert from native boolean python type to string 'true' or 'false'.

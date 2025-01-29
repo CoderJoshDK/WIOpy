@@ -11,5 +11,4 @@ build/
 *.egg-info
 instructions.txt
 
-asyncTests.py
-tests.py
+*tests.py

@@ -9,5 +9,6 @@ A basic wrapper for the WalmartIO API.
 # ruff: noqa: F403
 
 from .AsyncWIO import *
+from .utils.errors import *
 from .WalmartIO import *
 from .WalmartResponse import *

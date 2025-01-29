@@ -1,6 +1,8 @@
 """Module for errors that the API might encounter."""
 
-__all__ = ("InvalidRequestException",)
+from __future__ import annotations
+
+__all__ = ("InvalidRequestException", "WalmartException")
 
 
 class WalmartException(Exception):
@@ -10,12 +12,14 @@ class WalmartException(Exception):
 class InvalidRequestException(WalmartException):
     """Exception thrown if an invalid request response is thrown by Walmart."""
 
-    def __init__(self, status_code, **kwargs):  # noqa: D107
+    __slots__: tuple[str, ...] = ()
+
+    def __init__(self, status_code: int, **kwargs: str):  # noqa: D107
         error_message = "Error"
         if status_code == 400:
             error_message = "Bad Request"
-            if kwargs.get("detail"):
-                error_message = error_message + " - " + str(kwargs["detail"])
+            if detail := kwargs.get("detail"):
+                error_message = error_message + " - " + str(detail)
         elif status_code == 403:
             error_message = "Forbidden"
         elif status_code == 404:
