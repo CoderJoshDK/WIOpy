@@ -2,8 +2,16 @@
 
 from __future__ import annotations
 
+import sys
 from html import unescape
-from typing import Any, Final, cast, override
+from typing import Any, Final, cast
+
+# pyright: basic
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
+# pyright: strict
 
 __all__ = (
     "OverallRating",
