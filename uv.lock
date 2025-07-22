@@ -701,12 +701,13 @@ wheels = [
 
 [[package]]
 name = "wiopy"
-version = "1.2.1"
+version = "1.2.2"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
     { name = "pycryptodome" },
     { name = "requests" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
 
 [package.dev-dependencies]
@@ -720,6 +721,7 @@ requires-dist = [
     { name = "aiohttp" },
     { name = "pycryptodome" },
     { name = "requests" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12'", specifier = ">=4.5.0" },
 ]
 
 [package.metadata.requires-dev]
